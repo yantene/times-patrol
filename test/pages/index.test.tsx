@@ -12,7 +12,7 @@ dotenv.config({ path: "server/.env" });
 const apiClient = api(
   aspida(undefined, { baseURL: process.env.API_BASE_PATH })
 );
-const res = function <T extends () => any>(
+const res = function <T extends () => unknown>(
   data: ReturnType<T> extends Promise<infer S> ? S : never
 ) {
   return data;
