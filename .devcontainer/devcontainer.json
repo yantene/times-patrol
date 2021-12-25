@@ -1,0 +1,22 @@
+{
+  "name": "Development",
+  "dockerComposeFile": ["compose.yaml"],
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "settings": {
+    "terminal.integrated.profiles.linux": {
+      "zsh": {
+        "path": "zsh"
+      }
+    },
+    "terminal.integrated.defaultProfile.linux": "zsh"
+  },
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "prisma.prisma"
+  ],
+  "forwardPorts": [],
+  "remoteUser": "node",
+  "initializeCommand": "${localWorkspaceFolder}/.devcontainer/init.sh"
+}

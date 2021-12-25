@@ -1,0 +1,23 @@
+services:
+  dev:
+    image: dev
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    volumes:
+      - '..:/workspace:cached'
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'times-patrol']
+    environment:
+      POSTGRES_USER: times-patrol
+      POSTGRES_PASSWORD: times-patrol
