@@ -1,1 +1,1 @@
-global.fetch = require('node-fetch').default
+global.fetch = require("node-fetch").default;
