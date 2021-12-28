@@ -1,4 +1,5 @@
-import { WebClient } from "@slack/web-api";
+import { WebClient, PaginatePredicate } from "@slack/web-api";
+import { ConversationsListArguments } from "@slack/web-api/dist/methods";
 import {
   Channel,
   ConversationsListResponse,
@@ -17,20 +18,36 @@ const webClient = new WebClient(SLACK_BOT_TOKEN);
 export const fetchTimeses = depend(
   {
     webClient: webClient as {
-      conversations: { list(): Promise<ConversationsListResponse> };
+      paginate(
+        method: "conversations.list",
+        options: ConversationsListArguments,
+        shouldStop: (
+          page: ConversationsListResponse
+        ) => boolean | undefined | void,
+        reduce?: (
+          accumulator: Channel[] | undefined,
+          page: ConversationsListResponse,
+          index: number
+        ) => Channel[]
+      ): Promise<Channel[]>;
     },
   },
   async (
     { webClient },
     prefixes: string[] = ["times-", "times_"]
   ): Promise<Channel[]> => {
-    const convs = await webClient.conversations.list();
+    // https://slack.dev/node-slack-sdk/web-api#pagination
+    const channels = await webClient.paginate(
+      "conversations.list",
+      {},
+      ({ response_metadata }) => response_metadata?.next_cursor == null,
+      (prv, { channels }) => [...(prv ?? []), ...(channels ?? [])]
+    );
 
     const timeses =
-      convs.channels?.filter((channel) =>
+      channels.filter((channel) =>
         prefixes.some((prefix) => channel.name?.startsWith(prefix))
       ) ?? [];
-
     return timeses;
   }
 );

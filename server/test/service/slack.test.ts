@@ -43,27 +43,16 @@ function createDummyChannel(channelSubset: Channel): Channel {
 describe("#fetchTimeses()", () => {
   const injectedFetchTimeses = fetchTimeses.inject({
     webClient: {
-      conversations: {
-        list: jest.fn().mockResolvedValue({
-          ok: true,
-          channels: [
-            createDummyChannel({ name: "times-hoge" }),
-            createDummyChannel({ name: "times_fuga" }),
-            createDummyChannel({ name: "anken-piyo" }),
-          ],
-          response_metadata: {
-            next_cursor: Buffer.from("team:AAAAAAAAA").toString("base64"),
-            scopes: ["identify", "read", "post", "client", "apps"],
-            acceptedScopes: [
-              "channels:read",
-              "groups:read",
-              "mpim:read",
-              "im:read",
-              "read",
-            ],
-          },
-        }),
-      },
+      paginate: jest
+        .fn()
+        .mockResolvedValue([
+          createDummyChannel({ name: "times-hoge" }),
+          createDummyChannel({ name: "times_fuga" }),
+          createDummyChannel({ name: "anken-piyo" }),
+          createDummyChannel({ name: "times-foo" }),
+          createDummyChannel({ name: "times_bar" }),
+          createDummyChannel({ name: "anken-fizz" }),
+        ]),
     },
   });
 
@@ -75,11 +64,11 @@ describe("#fetchTimeses()", () => {
     });
   });
 
-  test("返り値に times-hoge と times_fuga が含まれること", async () => {
+  test("存在する times がすべて返り値に含まれること", async () => {
     const timeses = await injectedFetchTimeses(["times-", "times_"]);
     const timesNames = timeses.map(({ name }) => name);
 
-    ["times-hoge", "times_fuga"].forEach((name) => {
+    ["times-hoge", "times_fuga", "times-foo", "times_bar"].forEach((name) => {
       expect(timesNames).toContain(name);
     });
   });
