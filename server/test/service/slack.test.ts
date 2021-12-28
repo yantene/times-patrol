@@ -4,39 +4,38 @@ import { Channel } from "@slack/web-api/dist/response/ConversationsListResponse"
 
 function createDummyChannel(channelSubset: Channel): Channel {
   return {
-    id: "CXXXXXXXX",
+    id: "C012AB3CD",
     name: "times-dummy",
     is_channel: true,
     is_group: false,
     is_im: false,
-    is_mpim: false,
-    is_private: false,
     created: 1637236800, // 2021-11-18T21:00:00+09:00
+    creator: "U012A3CDE",
     is_archived: false,
     is_general: false,
     unlinked: 0,
     name_normalized: "times-dummy",
     is_shared: false,
-    is_org_shared: false,
-    is_pending_ext_shared: false,
-    pending_shared: [],
-    creator: "UXXXXXXXX",
     is_ext_shared: false,
-    shared_team_ids: ["TXXXXXXXX"],
-    pending_connected_team_ids: [],
-    is_member: false,
+    is_org_shared: false,
+    pending_shared: [],
+    is_pending_ext_shared: false,
+    is_member: true,
+    is_private: false,
+    is_mpim: false,
     topic: {
-      value: "",
-      creator: "UXXXXXXXX",
+      value: "Company-wide announcements and work-based matters",
+      creator: "U012A3CDE",
       last_set: 1637240400, // 2021-11-18T22:00:00+09:00
     },
     purpose: {
-      value: "",
-      creator: "UXXXXXXXX",
+      value:
+        "This channel is for team-wide communication and announcements. All team members are in this channel.",
+      creator: "U012A3CDE",
       last_set: 1637240400, // 2021-11-18T22:00:00+09:00
     },
     previous_names: [],
-    num_members: 50,
+    num_members: 4,
     ...channelSubset,
   };
 }
