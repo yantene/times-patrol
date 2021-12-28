@@ -41,35 +41,35 @@ function createDummyChannel(channelSubset: Channel): Channel {
   };
 }
 
-jest.mock("@slack/web-api", () => ({
-  WebClient: jest.fn(() => ({
-    conversations: {
-      list: jest.fn().mockResolvedValue({
-        ok: true,
-        channels: [
-          createDummyChannel({ name: "times-hoge" }),
-          createDummyChannel({ name: "times_fuga" }),
-          createDummyChannel({ name: "anken-piyo" }),
-        ],
-        response_metadata: {
-          next_cursor: Buffer.from("team:AAAAAAAAA").toString("base64"),
-          scopes: ["identify", "read", "post", "client", "apps"],
-          acceptedScopes: [
-            "channels:read",
-            "groups:read",
-            "mpim:read",
-            "im:read",
-            "read",
-          ],
-        },
-      }),
-    },
-  })),
-}));
-
 describe("#fetchTimeses()", () => {
+  const injectedFetchTimeses = fetchTimeses.inject({
+    webClient: {
+      conversations: {
+        list: jest.fn().mockResolvedValue({
+          ok: true,
+          channels: [
+            createDummyChannel({ name: "times-hoge" }),
+            createDummyChannel({ name: "times_fuga" }),
+            createDummyChannel({ name: "anken-piyo" }),
+          ],
+          response_metadata: {
+            next_cursor: Buffer.from("team:AAAAAAAAA").toString("base64"),
+            scopes: ["identify", "read", "post", "client", "apps"],
+            acceptedScopes: [
+              "channels:read",
+              "groups:read",
+              "mpim:read",
+              "im:read",
+              "read",
+            ],
+          },
+        }),
+      },
+    },
+  });
+
   test("times チャンネルのみが返されること", async () => {
-    const timeses = await fetchTimeses(["times-", "times_"]);
+    const timeses = await injectedFetchTimeses(["times-", "times_"]);
 
     timeses.forEach(({ name }) => {
       expect(name).toEqual(expect.stringMatching(/^times[-_]/));
@@ -77,7 +77,7 @@ describe("#fetchTimeses()", () => {
   });
 
   test("返り値に times-hoge と times_fuga が含まれること", async () => {
-    const timeses = await fetchTimeses(["times-", "times_"]);
+    const timeses = await injectedFetchTimeses(["times-", "times_"]);
     const timesNames = timeses.map(({ name }) => name);
 
     ["times-hoge", "times_fuga"].forEach((name) => {
