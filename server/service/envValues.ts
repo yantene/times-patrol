@@ -9,6 +9,7 @@ const API_SERVER_PORT = +(process.env.API_SERVER_PORT ?? "8080");
 const API_BASE_PATH = process.env.API_BASE_PATH ?? "";
 const API_ORIGIN = process.env.API_ORIGIN ?? "";
 const API_UPLOAD_DIR = process.env.API_UPLOAD_DIR ?? "";
+const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN ?? "";
 
 export {
   API_JWT_SECRET,
@@ -18,4 +19,5 @@ export {
   API_BASE_PATH,
   API_ORIGIN,
   API_UPLOAD_DIR,
+  SLACK_BOT_TOKEN,
 };

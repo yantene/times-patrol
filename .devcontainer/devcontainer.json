@@ -14,6 +14,7 @@
   "extensions": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
+    "orta.vscode-jest",
     "prisma.prisma"
   ],
   "forwardPorts": [],
