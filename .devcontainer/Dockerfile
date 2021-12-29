@@ -3,6 +3,9 @@ FROM node:14-alpine
 ENV LANG "C.UTF-8"
 
 RUN \
+  npm install -g npm
+
+RUN \
   apk update && \
   apk upgrade
 
