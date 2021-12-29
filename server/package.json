@@ -33,11 +33,13 @@
     "fastify-jwt": "^2.4.0",
     "fastify-multipart": "^4.0.5",
     "fastify-static": "^4.0.1",
+    "luxon": "^2.2.0",
     "pm2": "^4.5.6"
   },
   "devDependencies": {
     "@types/busboy": "^0.2.3",
     "@types/jest": "^26.0.22",
+    "@types/luxon": "^2.0.8",
     "cross-env": "^7.0.3",
     "frourio": "^0.25.1",
     "nodemon-webpack-plugin": "^4.5.2",

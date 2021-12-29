@@ -1,6 +1,9 @@
-import { fetchTimeses } from "$/service/slack";
+import { fetchMessages, fetchTimeses } from "$/service/slack";
 
 import { Channel } from "@slack/web-api/dist/response/ConversationsListResponse";
+
+import { Message } from "@slack/web-api/dist/response/ConversationsHistoryResponse";
+import { DateTime } from "luxon";
 
 function createDummyChannel(channelSubset: Channel): Channel {
   return {
@@ -72,4 +75,72 @@ describe("#fetchTimeses()", () => {
       expect(timesNames).toContain(name);
     });
   });
+});
+
+function createDummyMessage(
+  messageSubset: Message,
+  hasAttachments = false
+): Message {
+  return {
+    type: "message",
+    user: "U012AB3CDE",
+    text: "I find you punny and would like to smell your nose letter",
+    ts: "1512085950.000216",
+    ...(hasAttachments
+      ? {
+          has_attachments: {
+            service_name: "Leg end nary a laugh, Ink.",
+            text: "This is likely a pun about the weather.",
+            fallback: "We're withholding a pun from you",
+            thumb_url: "https://badpuns.example.com/puns/123.png",
+            thumb_width: 1920,
+            thumb_height: 700,
+            id: 1,
+          },
+        }
+      : {}),
+    ...messageSubset,
+  };
+}
+
+describe("#fetchMessages()", () => {
+  const injectedFetchMessages = fetchMessages.inject({
+    webClient: {
+      paginate: jest.fn().mockResolvedValue([
+        createDummyMessage({
+          text: "あしたは誕生日だよ",
+          ts: DateTime.fromISO(
+            "2021-11-17T21:00:00+09:00"
+          ).toSeconds.toString(),
+        }),
+        createDummyMessage(
+          {
+            text: "きょうは誕生日だよ",
+            ts: DateTime.fromISO(
+              "2021-11-18T21:00:00+09:00"
+            ).toSeconds.toString(),
+          },
+          true
+        ),
+        createDummyMessage({
+          text: "よい誕生日だったな",
+          ts: DateTime.fromISO(
+            "2021-11-19T00:00:00+09:00"
+          ).toSeconds.toString(),
+        }),
+      ]),
+    },
+  });
+
+  test("メッセージを取得できること", async () => {
+    const messages = await injectedFetchMessages("C012AB3CD", [
+      DateTime.fromISO("2021-11-17T00:00:00+09:00"),
+      DateTime.fromISO("2021-11-18T23:59:59+09:00"),
+    ]);
+
+    expect(messages.length).toBeGreaterThan(0);
+  });
+
+  // TODO: うまくモックする必要がある
+  xtest("期間指定が正しく動作すること");
 });
