@@ -2,6 +2,7 @@ import { WebClient } from "@slack/web-api";
 import {
   ConversationsListArguments,
   ConversationsHistoryArguments,
+  UsersListArguments,
 } from "@slack/web-api/dist/methods";
 import {
   Channel,
@@ -11,6 +12,10 @@ import {
   Message,
   ConversationsHistoryResponse,
 } from "@slack/web-api/dist/response/ConversationsHistoryResponse";
+import {
+  Member,
+  UsersListResponse,
+} from "@slack/web-api/dist/response/UsersListResponse";
 import { DateTime } from "luxon";
 
 import { SLACK_BOT_TOKEN } from "./envValues";
@@ -99,6 +104,35 @@ export const fetchMessages = depend(
       },
       ({ has_more }) => has_more,
       (prv, { messages }) => [...(prv ?? []), ...(messages ?? [])]
+    );
+  }
+);
+
+/**
+ * ワークスペースに所属するすべてのメンバーを取得する。
+ * @returns 取得したメンバーの配列。
+ */
+export const fetchAllMembers = depend(
+  {
+    webClient: webClient as {
+      paginate(
+        method: "users.list",
+        options: UsersListArguments,
+        shouldStop: (page: UsersListResponse) => boolean | undefined | void,
+        reduce?: (
+          accumulator: Member[] | undefined,
+          page: UsersListResponse,
+          index: number
+        ) => Member[]
+      ): Promise<Member[]>;
+    },
+  },
+  ({ webClient }) => {
+    return webClient.paginate(
+      "users.list",
+      {},
+      ({ response_metadata }) => response_metadata?.next_cursor == null,
+      (prv, { members }) => [...(prv ?? []), ...(members ?? [])]
     );
   }
 );
