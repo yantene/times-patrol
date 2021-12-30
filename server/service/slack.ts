@@ -1,8 +1,9 @@
-import { WebClient } from "@slack/web-api";
+import { ConversationsMembersResponse, WebClient } from "@slack/web-api";
 import {
   ConversationsListArguments,
   ConversationsHistoryArguments,
   UsersListArguments,
+  ConversationsMembersArguments,
 } from "@slack/web-api/dist/methods";
 import {
   Channel,
@@ -23,6 +24,9 @@ import { SLACK_BOT_TOKEN } from "./envValues";
 import { depend } from "velona";
 
 const webClient = new WebClient(SLACK_BOT_TOKEN);
+
+// Web API methods: https://api.slack.com/methods
+// web api package: https://slack.dev/node-slack-sdk/web-api
 
 /**
  * times チャンネルのリストを取得する。
@@ -131,6 +135,38 @@ export const fetchAllMembers = depend(
     return webClient.paginate(
       "users.list",
       {},
+      ({ response_metadata }) => response_metadata?.next_cursor == null,
+      (prv, { members }) => [...(prv ?? []), ...(members ?? [])]
+    );
+  }
+);
+
+/**
+ * そのチャンネルに参加しているメンバーの ID を取得する。
+ * @param channelId 取得対象のチャンネルの ID。
+ * @returns 取得したメンバー ID の配列。
+ */
+export const fetchMemberIdsByChannelId = depend(
+  {
+    webClient: webClient as {
+      paginate(
+        method: "conversations.members",
+        options: ConversationsMembersArguments,
+        shouldStop: (
+          page: ConversationsMembersResponse
+        ) => boolean | undefined | void,
+        reduce?: (
+          accumulator: string[] | undefined,
+          page: ConversationsMembersResponse,
+          index: number
+        ) => string[]
+      ): Promise<string[]>;
+    },
+  },
+  ({ webClient }, channelId: string) => {
+    return webClient.paginate(
+      "conversations.members",
+      { channel: channelId },
       ({ response_metadata }) => response_metadata?.next_cursor == null,
       (prv, { members }) => [...(prv ?? []), ...(members ?? [])]
     );

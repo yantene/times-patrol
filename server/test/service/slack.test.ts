@@ -1,4 +1,9 @@
-import { fetchMessages, fetchTimeses, fetchAllMembers } from "$/service/slack";
+import {
+  fetchMessages,
+  fetchTimeses,
+  fetchAllMembers,
+  fetchMemberIdsByChannelId,
+} from "$/service/slack";
 
 import { Channel } from "@slack/web-api/dist/response/ConversationsListResponse";
 import { Message } from "@slack/web-api/dist/response/ConversationsHistoryResponse";
@@ -204,5 +209,21 @@ describe("#fetchAllMembers()", () => {
     const members = await injectedFetchAllMembers();
 
     expect(members.length).toBeGreaterThan(0);
+  });
+});
+
+describe("#fetchMemberIdsByChannelId", () => {
+  const injectedFetchMemberIdsByChannelId = fetchMemberIdsByChannelId.inject({
+    webClient: {
+      paginate: jest
+        .fn()
+        .mockResolvedValue(["U023BECGF", "U061F7AUR", "W012A3CDE"]),
+    },
+  });
+
+  test("所属するメンバーの ID を取得できること", async () => {
+    const memberIds = await injectedFetchMemberIdsByChannelId("C1234567890");
+
+    expect(memberIds.length).toBeGreaterThan(0);
   });
 });
