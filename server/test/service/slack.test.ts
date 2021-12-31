@@ -1,8 +1,8 @@
 import {
   fetchMessages,
   fetchTimeses,
-  fetchAllMembers,
-  fetchMemberIdsByChannelId,
+  fetchAllUsers,
+  fetchUserIdsByChannelId,
 } from "$/service/slack";
 
 import { Channel } from "@slack/web-api/dist/response/ConversationsListResponse";
@@ -151,7 +151,7 @@ describe("#fetchMessages()", () => {
   xtest("期間指定が正しく動作すること", () => ({}));
 });
 
-function createDummyMember(memberSubset: Member): Member {
+function createDummyUser(memberSubset: Member): Member {
   return {
     id: "U012A3CDE",
     team_id: "T012AB3C4",
@@ -192,28 +192,28 @@ function createDummyMember(memberSubset: Member): Member {
   };
 }
 
-describe("#fetchAllMembers()", () => {
-  const injectedFetchAllMembers = fetchAllMembers.inject({
+describe("#fetchAllUsers()", () => {
+  const injectedFetchAllUsers = fetchAllUsers.inject({
     webClient: {
       paginate: jest
         .fn()
         .mockResolvedValue([
-          createDummyMember({ name: "Taro" }),
-          createDummyMember({ name: "Jiro" }),
-          createDummyMember({ name: "Saburo" }),
+          createDummyUser({ name: "Taro" }),
+          createDummyUser({ name: "Jiro" }),
+          createDummyUser({ name: "Saburo" }),
         ]),
     },
   });
 
   test("メンバーを取得できること", async () => {
-    const members = await injectedFetchAllMembers();
+    const members = await injectedFetchAllUsers();
 
     expect(members.length).toBeGreaterThan(0);
   });
 });
 
-describe("#fetchMemberIdsByChannelId", () => {
-  const injectedFetchMemberIdsByChannelId = fetchMemberIdsByChannelId.inject({
+describe("#fetchUserIdsByChannelId", () => {
+  const injectedFetchUserIdsByChannelId = fetchUserIdsByChannelId.inject({
     webClient: {
       paginate: jest
         .fn()
@@ -222,7 +222,7 @@ describe("#fetchMemberIdsByChannelId", () => {
   });
 
   test("所属するメンバーの ID を取得できること", async () => {
-    const memberIds = await injectedFetchMemberIdsByChannelId("C1234567890");
+    const memberIds = await injectedFetchUserIdsByChannelId("C1234567890");
 
     expect(memberIds.length).toBeGreaterThan(0);
   });

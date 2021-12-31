@@ -113,10 +113,10 @@ export const fetchMessages = depend(
 );
 
 /**
- * ワークスペースに所属するすべてのメンバーを取得する。
- * @returns 取得したメンバーの配列。
+ * ワークスペースに所属するすべてのSlack ユーザを取得する。
+ * @returns 取得したユーザの配列。
  */
-export const fetchAllMembers = depend(
+export const fetchAllUsers = depend(
   {
     webClient: webClient as {
       paginate(
@@ -142,11 +142,11 @@ export const fetchAllMembers = depend(
 );
 
 /**
- * そのチャンネルに参加しているメンバーの ID を取得する。
+ * そのチャンネルに参加しているユーザの ID を取得する。
  * @param channelId 取得対象のチャンネルの ID。
- * @returns 取得したメンバー ID の配列。
+ * @returns 取得したユーザ ID の配列。
  */
-export const fetchMemberIdsByChannelId = depend(
+export const fetchUserIdsByChannelId = depend(
   {
     webClient: webClient as {
       paginate(
