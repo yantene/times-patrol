@@ -12,3 +12,14 @@ model Task {
   label String
   done  Boolean @default(false)
 }
+
+model User {
+  id        String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  realName    String // Member.profile.real_name (e.g. "Shuhei Yoshida")
+  displayName String? // Member.profile.display_name (e.g. "周平")
+
+  isDeleted Boolean // Member.deleted
+}
