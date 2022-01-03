@@ -21,3 +21,10 @@ services:
     environment:
       POSTGRES_USER: times-patrol
       POSTGRES_PASSWORD: times-patrol
+
+  redis:
+    image: redis:6.2
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+    volumes:
+      - "./volumes/redis/redis.conf:/usr/local/etc/redis/redis.conf"
