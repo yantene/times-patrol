@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch TypeScript using ts-node in server/ directory",
+      "type": "node",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/server/node_modules/**"
+      ],
+      "cwd": "${workspaceFolder}/server",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "program": "${file}"
+    }
+  ]
+}
